@@ -5,17 +5,18 @@ const MongoClient = require('mongodb').MongoClient
 
 var db, collection;
 
-const url = "mongodb+srv://demo:demo@cluster0-q2ojb.mongodb.net/test?retryWrites=true";
-const dbName = "demo";
+const url = "mongodb+srv://demo:testpassword@cluster0.a8hcjh9.mongodb.net/savage-demo?retryWrites=true&w=majority";
+const dbName = "savage-demo";
 
-app.listen(3000, () => {
-    MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true }, (error, client) => {
-        if(error) {
-            throw error;
-        }
-        db = client.db(dbName);
-        console.log("Connected to `" + dbName + "`!");
-    });
+
+
+
+MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true }, (error, client) => {
+  if(error) {
+      throw error;
+  }
+  db = client.db(dbName);
+  console.log("Connected to `" + dbName + "`!");
 });
 
 app.set('view engine', 'ejs')
@@ -52,10 +53,27 @@ app.put('/messages', (req, res) => {
     res.send(result)
   })
 })
-
+app.put('/messages', (req, res) => {
+  db.collection('messages')
+  .findOneAndUpdate({name: req.body.name, msg: req.body.msg}, {
+    $set: {
+      thumbDown:req.body.thumbDown + 1
+    }
+  }, {
+    sort: {_id: -1},
+    upsert: true
+  }, (err, result) => {
+    if (err) return res.send(err)
+    res.send(result)
+  })
+})
 app.delete('/messages', (req, res) => {
   db.collection('messages').findOneAndDelete({name: req.body.name, msg: req.body.msg}, (err, result) => {
     if (err) return res.send(500, err)
     res.send('Message deleted!')
   })
 })
+
+app.listen(8080, () => {
+console.log('listening on 8080')
+});
