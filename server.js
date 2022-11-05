@@ -5,17 +5,18 @@ const MongoClient = require('mongodb').MongoClient
 
 var db, collection;
 
-const url = "mongodb+srv://demo:demo@cluster0-q2ojb.mongodb.net/test?retryWrites=true";
-const dbName = "demo";
+const url = 'mongodb+srv://demo:demopassword@cluster0.wqhjxcd.mongodb.net/?retryWrites=true&w=majority';
+const dbName = "coinflipgame";
 
-app.listen(3000, () => {
-    MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true }, (error, client) => {
-        if(error) {
-            throw error;
-        }
-        db = client.db(dbName);
-        console.log("Connected to `" + dbName + "`!");
-    });
+
+
+
+MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true }, (error, client) => {
+  if(error) {
+      throw error;
+  }
+  db = client.db(dbName);
+  console.log("Connected to `" + dbName + "`!");
 });
 
 app.set('view engine', 'ejs')
@@ -24,22 +25,57 @@ app.use(bodyParser.json())
 app.use(express.static('public'))
 
 app.get('/', (req, res) => {
-  db.collection('messages').find().toArray((err, result) => {
+  db.collection('results').find().toArray((err, result) => {
     if (err) return console.log(err)
     res.render('index.ejs', {messages: result})
   })
 })
 
-app.post('/messages', (req, res) => {
-  db.collection('messages').insertOne({name: req.body.name, msg: req.body.msg, thumbUp: 0, thumbDown:0}, (err, result) => {
-    if (err) return console.log(err)
-    console.log('saved to database')
-    res.redirect('/')
-  })
-})
+app.post('/results', (req, res) => {
 
-app.put('/messages', (req, res) => {
-  db.collection('messages')
+  let coinFlipResult = Math.ceil(Math.random() * 2);
+  let comResult;
+  let userInput = req.body.userPlay.toLowerCase()
+
+  if (userInput == 'heads' || userInput == 'tails') {
+    if (coinFlipResult <= 1) {
+      comResult = "heads";
+    } else if (coinFlipResult <= 2) {
+      comResult = "tails";
+    }
+    let outcome;
+    if (comResult === req.body.userPlay) {
+      outcome = "Winner!";
+    } else {
+      outcome = "Loser!";
+    }
+  
+    db.collection("results").insertOne(
+      {
+        userPlay: req.body.userPlay,
+        coinFlipResult: comResult,
+        winOrLoss: outcome,
+          
+      },
+      (err, result) => {
+        if (err) return console.log(err);
+        console.log("saved to database");
+        res.redirect("/");
+      }
+    );
+  }
+});
+
+
+//   db.collection('messages').insertOne({name: req.body.name, msg: req.body.msg, thumbUp: 0, thumbDown:0}, (err, result) => {
+//     if (err) return console.log(err)
+//     console.log('saved to database')
+//     res.redirect('/')
+//   })
+// })
+
+app.put('/results', (req, res) => {
+  db.collection('results')
   .findOneAndUpdate({name: req.body.name, msg: req.body.msg}, {
     $set: {
       thumbUp:req.body.thumbUp + 1
@@ -53,9 +89,13 @@ app.put('/messages', (req, res) => {
   })
 })
 
-app.delete('/messages', (req, res) => {
-  db.collection('messages').findOneAndDelete({name: req.body.name, msg: req.body.msg}, (err, result) => {
+app.delete('/results', (req, res) => {
+  db.collection('results').findOneAndDelete({name: req.body.name, msg: req.body.msg}, (err, result) => {
     if (err) return res.send(500, err)
     res.send('Message deleted!')
   })
 })
+
+app.listen(8080, () => {
+console.log('listening on 8080')
+});

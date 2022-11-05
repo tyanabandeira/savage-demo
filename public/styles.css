@@ -1,6 +1,92 @@
 body{
-  background: red;
+  background-image: url(./coinfliptwo.jpg);
+  background-size: cover;
+  background-repeat: no-repeat;
 }
+
+h1{
+  font-family: sans-serif;
+  display: flex;
+  margin: 0 auto;
+  justify-content:center;
+}
+
+
+.messages{
+  display:block;
+  line-height: 2rem;
+}
+
+.message{
+  display: flex;
+  margin: 0 auto;
+  justify-content:center;
+  font-family: sans-serif;
+  word-spacing: 15px;
+}
+
+li + span{
+  word-spacing: 15px;
+}
+
+form{
+  display: flex;
+  margin: 0 auto;
+  justify-content:center;
+}
+/* .message{
+  display: flex;
+  margin: 0 auto;
+  justify-content:center;
+}
+
+span{
+  display: flex;
+  margin: 0 auto;
+  justify-content:center;
+} */
+
+
+h2{
+  font-family: sans-serif;
+  display: flex;
+  margin: 0 auto;
+  justify-content:center;
+}
+
 h3{
   margin-top: 40px;
+  font-family: sans-serif;
+  display: flex;
+  margin: 0 auto;
+  justify-content:center;
 }
+
+.userPlayer{
+  color:rgb(146, 207, 227);
+  font-weight: bold;
+  font-family: sans-serif;
+  word-spacing: 2px;
+}
+
+.outCome{
+  color:darkolivegreen;
+  font-weight: bold;
+  font-family: sans-serif;
+}
+
+.status{
+  color:goldenrod;
+  font-weight: bold;
+  font-family: sans-serif;
+}
+
+h4{
+  font-family: sans-serif;
+  display: flex;
+  margin: 0 auto;
+  justify-content:center;
+  margin-bottom: 6px;
+}
+
+
